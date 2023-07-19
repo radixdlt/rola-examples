@@ -29,7 +29,7 @@ const deriveVirtualEcdsaSecp256k1AccountAddress = (
 ) =>
   ResultAsync.fromPromise(
     ManifestAstValue.Address.virtualAccountAddress(
-      new PublicKey.Ed25519(publicKey),
+      new PublicKey.Secp256k1(publicKey),
       networkId /* The ID of the network to derive the address for. */
     ),
     (error: any): Error => error
