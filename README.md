@@ -2,6 +2,10 @@
 
 This is a simple end-to-end implementation of ROLA using a express server as backend and TypeScript dApp as client.
 
+ROLA is method of authenticating something claimed by the user connected to your dApp with the Radix Wallet. It uses the capabilities of the Radix Network to make this possible in a way that is decentralized and flexible for the user.
+
+ROLA is intended for use in the server backend portion of a [Full Stack dApp](https://docs-babylon.radixdlt.com/main/getting-started-developers/dapp-backend/building-a-full-stack-dapp.html). It runs "off-ledger" alongside backend business and user management logic, providing reliable authentication of claims of user control using "on-ledger" data from the Radix Network.
+
 ## Getting started
 
 Run `npm install` to install dependencies
@@ -28,28 +32,26 @@ Lets go through an end-to-end ROLA verification flow that includes sending a req
 
 ### 1) User enters a dApp and clicks connect in √ Connect Button
 
-Lets assume that the user is not a new Radix dApp user. She has gone through the onboarding process and have a Radix Wallet installed, setup with a persona. She clicks on connect in √ Connect Button.
+This walkthrough will assume the user has already been onboarded to the Radix network, this means:
+* [The user has already installed the Radix Wallet.](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html)
+* Personas has already been setup.
+* Connected to a Radix dApp via the [√ Connect Button](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html).
 
 ### 2-3) dApp backend creates a challenge
 
-The challenge is a random 32 bytes hex encoded string.
+The primary use for ROLA is to authenticate the user's Persona login with the user's control of account(s) on Radix. Let's say that Alice is subscribed to an online streaming service on the Radix network called Radflix, which requires a subscription badge to enter the website. Alice logs in with her Persona to Radflix and now needs to prove that she owns an account that contains a Radflix subscription badge. 
 
-It looks something like this:
-`4ccb0555d6b4faad0d7f5ed40bf4e4f0665c8ba35929c638e232e09775d0fa0e`
-
-The challenge is generated and stored in the dApp backend and return to the client.
+ROLA creates an challenge with a random 32 bytes hex encoded string that looks something like: `4ccb0555d6b4faad0d7f5ed40bf4e4f0665c8ba35929c638e232e09775d0fa0e`. The challenge is generated and stored in the dApp backend and return to the client.
 
 **Why do we need a challenge?**
 
-The challenge plays an important role in the authentication flow, namely preventing [replay attacks](https://www.educative.io/answers/what-is-a-replay-attack) from bad actors. The challenge ensures that an authentication request payload sent from the client can only be used once. After a challenge is claimed by a request, the subsequent requests can no longer be resolved successfully with the same payload. As a security best practice a stored challenge should have a short expiration time, in this case, just enough time for a user to interact with the wallet.
+The challenge plays an important role in the authentication flow, namely preventing [replay attacks](https://www.educative.io/answers/what-is-a-replay-attack) from bad actors. The challenge ensures that an authentication request payload sent from the client can only be used once. After a challenge is claimed by a request, the subsequent requests can no longer be resolved successfully with the same payload. As a security best practice, a stored challenge should have a short expiration time. In this case, just enough time for a user to interact with the wallet.
 
-In our implementation we are storing the challenges in in-memory. That works for development purposes. In a production environment, a database should be used to allow challenges to be claimed in between instances of servers in a horizontal scaling setup.
+In our implementation, we are storing the challenges in in-memory, which is sufficient for development purposes. However, in a production environment where the dApp needs to handle more users and scale horizontally; a database should be used to allow claiming of challenges between instances of servers.
 
 ### 4-5) Wallet creating a signature
 
-Now we have everything we need for the wallet to create a signature. The dApp sends a wallet data request through Radix Connect asking for a proof of ownership.
-
-After user approving the request, the wallet sends back a response containing a signed challenge.
+Once the user has connected to a dApp, the wallet now has everything it needs to create a signature. If a dApp requires proof of ownership from the user, the dApp sends that request through the √ Connect Button where the user will receive it in their wallet to sign the challenge. The wallet then sends back a response containing a signed challenge.
 
 ```typescript
 {
@@ -68,13 +70,13 @@ The values in the wallet response are needed for the backend to verify that the 
 
 ### 6-7) dApp backend verifies the proof using ROLA
 
-After the dApp frontend sends the signed challenge to the dApp backend, the ROLA verification flow starts.
+After the dApp frontend sends the signed challenge to the dApp backend, the ROLA verification flow starts shown in the diagram below:
 
 ![ROLA Flow](docs/verification-flow.png "ROLA verification flow")
 
 **1. Claim challenge**
 
-The first step in the verification process is to check if the challenge provided in the request body is valid. The challenge should exist as an entry in the challenge store. In our example the challenge store is a simple in-memory map that stores unclaimed challenges. If the challenge exists in the store, get and delete that challenge entry then proceed to the next step.
+The first step in the verification process is to check if the challenge provided in the request body is valid. The challenge should exist as an entry in the challenge store. In our example, the challenge store is a simple in-memory map that stores unclaimed challenges. If the challenge exists in the store, `get` and `delete` that challenge entry then proceed to the next step.
 
 ```typescript
 // A simple in-memory store for challenges. A database should be used in production.
@@ -173,10 +175,10 @@ If it matches, the user is authenticated
 
 **B) `owner_keys` metadata not set**
 
-In this case we use [TypeScript Radix Engine Toolkit (RET)](https://github.com/radixdlt/typescript-radix-engine-toolkit) to derive an address from the public key provided in the request.body
+In this case we use [TypeScript Radix Engine Toolkit (RET)](https://github.com/radixdlt/typescript-radix-engine-toolkit) to derive an address from the public key provided in the `request.body`.
 
-If the derived address matches the `address` provided `request.body.proof.publicKey`, the user is authenticated
+If the derived address matches the `address` provided `request.body.proof.publicKey`, the user is authenticated!
 
 ### Keeping users authenticated
 
-ROLA is meant to be a secure and framework agnostic way to authenticate a user using public key cryptography enabled by the Radix wallet. After a successful ROLA verification it is up to the dApp to establish a persistent authentication strategy that allows the client to stay authenticated between requests.
+ROLA is meant to be a secure and framework agnostic way to authenticate a user using public key cryptography enabled by the Radix Wallet. After a successful ROLA verification it is up to the dApp to establish a persistent authentication strategy that allows the client to stay authenticated between requests.
