@@ -33,13 +33,14 @@ Lets go through an end-to-end ROLA verification flow that includes sending a req
 ### 1) User enters a dApp and clicks connect in √ Connect Button
 
 This walkthrough will assume the user has already been onboarded to the Radix network, this means:
-* [The user has already installed the Radix Wallet.](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html)
-* Personas has already been setup.
-* Connected to a Radix dApp via the [√ Connect Button](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html).
+
+- [The user has already installed the Radix Wallet.](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html)
+- Personas has already been setup.
+- Connected to a Radix dApp via the [√ Connect Button](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-overview.html).
 
 ### 2-3) dApp backend creates a challenge
 
-The primary use for ROLA is to authenticate the user's Persona login with the user's control of account(s) on Radix. Let's say that Alice is subscribed to an online streaming service on the Radix network called Radflix, which requires a subscription badge to enter the website. Alice logs in with her Persona to Radflix and now needs to prove that she owns an account that contains a Radflix subscription badge. 
+The primary use for ROLA is to authenticate the user's Persona login with the user's control of account(s) on Radix. Let's say that Alice is subscribed to an online streaming service on the Radix network called Radflix, which requires a subscription badge to enter the website. Alice logs in with her Persona to Radflix and now needs to prove that she owns an account that contains a Radflix subscription badge.
 
 ROLA creates an challenge with a random 32 bytes hex encoded string that looks something like: `4ccb0555d6b4faad0d7f5ed40bf4e4f0665c8ba35929c638e232e09775d0fa0e`. The challenge is generated and stored in the dApp backend and return to the client.
 
@@ -139,15 +140,6 @@ In this step we verify the signature using elliptic curve cryptography.
 ```
 
 In the example we are using the [elliptic](https://www.npmjs.com/package/elliptic) library for elliptic curve cryptography. You are free to choose any tool that enables signature verification for `curve25519` and `secp256k1`.
-
-```typescript
-const publicKey =
-  input.proof.curve === "curve25519"
-    ? curve25519.keyFromPublic(input.proof.publicKey, "hex")
-    : secp256k1.keyFromPublic(input.proof.publicKey, "hex");
-
-const isValid = publicKey.verify(signatureMessageHex, input.proof.signature);
-```
 
 If the signature is valid, proceed to the next step.
 
