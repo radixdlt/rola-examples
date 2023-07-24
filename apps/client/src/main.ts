@@ -1,12 +1,15 @@
 import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import radixLogo from "/radix-icon_128x128.png";
-import { RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
+import {
+  DataRequestBuilder,
+  RadixDappToolkit,
+} from "@radixdlt/radix-dapp-toolkit";
 
 const radixDappToolkit = RadixDappToolkit({
   dAppDefinitionAddress:
-    "account_tdx_21_129e0ffephdq9mtd26rn5m99pq3jwwscggwa8wxnu6pz78lutsw8j7v",
-  networkId: 33,
+    "account_tdx_d_12xxwkx4fmz680e9wz8atdnyslr9vt7x9qvcfxhtqfnpfhxyjzwtyna",
+  networkId: 13,
 });
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
@@ -27,18 +30,25 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
+const getChallenge: () => Promise<string> = () =>
+  fetch("http://localhost:3000/create-challenge")
+    .then((res) => res.json())
+    .then((res) => res.challenge);
+
+radixDappToolkit.walletApi.provideChallengeGenerator(getChallenge);
+
 const rolaButtonElement = document.getElementById("rola")!;
 
 rolaButtonElement.addEventListener("click", async () => {
-  const { challenge }: { challenge: string } = await fetch(
-    "http://localhost:3000/create-challenge"
-  ).then((res) => res.json());
+  radixDappToolkit.walletApi.setRequestData(
+    DataRequestBuilder.persona().withProof()
+  );
 
-  const result = await radixDappToolkit.requestData({ challenge });
+  const result = await radixDappToolkit.walletApi.sendRequest();
 
   if (result.isErr()) return alert(JSON.stringify(result.error, null, 2));
 
-  const signedChallenge = result.value.signedChallenges[0];
+  const [signedChallenge] = result.value.proofs;
 
   const verifiedResult: { verified: boolean } = await fetch(
     "http://localhost:3000/verify",

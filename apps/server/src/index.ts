@@ -40,10 +40,10 @@ const ChallengeStore = () => {
 const challengeStore = ChallengeStore()
 
 const rola = RolaFactory({
-  gatewayService: GatewayService('https://enkinet-gateway.radixdlt.com'), // gateway service to query the ledger
+  gatewayService: GatewayService('https://ansharnet-gateway.radixdlt.com'), // gateway service to query the ledger
   dAppDefinitionAddress:
-    'account_tdx_21_129e0ffephdq9mtd26rn5m99pq3jwwscggwa8wxnu6pz78lutsw8j7v', // address of the dApp definition
-  networkId: 33, // network id of the Radix network
+    'account_tdx_d_12xxwkx4fmz680e9wz8atdnyslr9vt7x9qvcfxhtqfnpfhxyjzwtyna', // address of the dApp definition
+  networkId: 13, // network id of the Radix network
   expectedOrigin: 'http://localhost:4000', // origin of the client making the wallet request
 })
 
