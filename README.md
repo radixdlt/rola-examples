@@ -40,7 +40,7 @@ This walkthrough will assume the user has already been onboarded to the Radix ne
 
 ### 2-3) dApp backend creates a challenge
 
-The primary use for ROLA is to authenticate the user's Persona login with the user's control of account(s) on Radix. Let's say that Alice is subscribed to an online streaming service on the Radix network called Radflix, which requires a subscription badge to enter the website. Alice logs in with her Persona to Radflix and now needs to prove that she owns an account that contains a Radflix subscription badge.
+The primary use for ROLA is to authenticate the user's Persona login with the user's control of account(s) on Radix. Let's say that Alice is subscribed to an online streaming service on the Radix network called Radflix, which requires a subscription badge to enter the website. Alice logs in with her Persona to Radflix and now needs to prove that she owns an account that contains a Radflix subscription badge. By using Rola we can verify that Alice is the owner of the account that contains the Radflix subscription badge. Once we have verified that Alice is the owner of the account, we can then use the account to check for the Radflix subscription badge and verify that Alice has a valid subscription.
 
 ROLA creates an challenge with a random 32 bytes hex encoded string that looks something like: `4ccb0555d6b4faad0d7f5ed40bf4e4f0665c8ba35929c638e232e09775d0fa0e`. The challenge is generated and stored in the dApp backend and return to the client.
 
