@@ -7,7 +7,7 @@ ROLA is method of authenticating something claimed by the user connected to your
 ROLA is intended for use in the server backend portion of a [Full Stack dApp](https://docs-babylon.radixdlt.com/main/getting-started-developers/dapp-backend/building-a-full-stack-dapp.html). It runs "off-ledger" alongside backend business and user management logic, providing reliable authentication of claims of user control using "on-ledger" data from the Radix Network.
 
 ## Getting started
-This dApp shows how to use ROLA to proof of control of an Identity component, which can be used for authenticating a user’s login using a Persona.
+This dApp shows how to use ROLA to prove control of an Identity component, which can be used for authenticating a user’s login using a Persona.
 To run the example, you'll need a Connector Extension and the Android or iOS Wallet. Check our [Radix Wallet Installation and Usage](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet/wallet-and-connector-installation.html) to find out how to get them.
 
 Run `npm install` to install dependencies
