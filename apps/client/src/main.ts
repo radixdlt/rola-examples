@@ -6,12 +6,6 @@ import {
   RadixDappToolkit,
 } from "@radixdlt/radix-dapp-toolkit";
 
-const radixDappToolkit = RadixDappToolkit({
-  dAppDefinitionAddress:
-    "account_tdx_d_12xxwkx4fmz680e9wz8atdnyslr9vt7x9qvcfxhtqfnpfhxyjzwtyna",
-  networkId: 13,
-});
-
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <a href="https://github.com/radixdlt/radix-dapp-toolkit" target="_blank">
@@ -21,14 +15,29 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
     </a>
     <h1>Radix dApp Toolkit + TypeScript</h1>
-    <div class="card">
-      <button id="rola" type="button">Trigger ROLA</button>
-    </div>
+    <radix-connect-button></radix-connect-button>
+    <pre id="rola-result"></pre>
     <p class="read-the-docs">
       Click on the Radix and TypeScript logos to learn more
     </p>
   </div>
 `;
+
+const radixDappToolkit = RadixDappToolkit({
+  dAppDefinitionAddress:
+    "account_tdx_d_12xxwkx4fmz680e9wz8atdnyslr9vt7x9qvcfxhtqfnpfhxyjzwtyna",
+  networkId: 13,
+});
+
+// Clear the dApp state for example purposes
+setTimeout(() => {
+  radixDappToolkit.disconnect();
+});
+
+radixDappToolkit.walletApi.setRequestData(
+  DataRequestBuilder.persona().withProof(),
+  DataRequestBuilder.accounts().atLeast(1).withProof()
+);
 
 const getChallenge: () => Promise<string> = () =>
   fetch("http://localhost:3000/create-challenge")
@@ -37,27 +46,18 @@ const getChallenge: () => Promise<string> = () =>
 
 radixDappToolkit.walletApi.provideChallengeGenerator(getChallenge);
 
-const rolaButtonElement = document.getElementById("rola")!;
+const rolaResultElement = document.getElementById("rola-result")!;
 
-rolaButtonElement.addEventListener("click", async () => {
-  radixDappToolkit.walletApi.setRequestData(
-    DataRequestBuilder.persona().withProof()
+radixDappToolkit.walletApi.walletData$.subscribe(async (walletData) => {
+  const { valid } = await fetch("http://localhost:3000/verify", {
+    method: "POST",
+    body: JSON.stringify(walletData.proofs),
+    headers: { "content-type": "application/json" },
+  }).then((res): Promise<{ valid: boolean }> => res.json());
+
+  rolaResultElement.innerHTML = JSON.stringify(
+    walletData.proofs.map((item) => ({ ...item, rolaVerified: valid })),
+    null,
+    2
   );
-
-  const result = await radixDappToolkit.walletApi.sendRequest();
-
-  if (result.isErr()) return alert(JSON.stringify(result.error, null, 2));
-
-  const [signedChallenge] = result.value.proofs;
-
-  const verifiedResult: { verified: boolean } = await fetch(
-    "http://localhost:3000/verify",
-    {
-      method: "POST",
-      body: JSON.stringify(signedChallenge),
-      headers: { "content-type": "application/json" },
-    }
-  ).then((res) => res.json());
-
-  alert(JSON.stringify(verifiedResult, null, 2));
 });
