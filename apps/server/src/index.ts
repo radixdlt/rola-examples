@@ -4,6 +4,7 @@ import { SignedChallenge } from '@radixdlt/radix-dapp-toolkit'
 import { RolaFactory } from './rola/rola'
 import cors from 'cors'
 import { GatewayService } from './rola/gateway'
+import { ResultAsync } from 'neverthrow'
 
 const app = express()
 app.use(cors())
@@ -51,14 +52,23 @@ app.get('/create-challenge', (req, res) => {
   res.send({ challenge: challengeStore.create() })
 })
 
-app.post<{}, { valid: boolean }, SignedChallenge>(
+app.post<{}, { valid: boolean }, SignedChallenge[]>(
   '/verify',
   async (req, res) => {
-    const isChallengeValid = challengeStore.verify(req.body.challenge)
+    const challenges = [
+      ...req.body
+        .reduce((acc, curr) => acc.add(curr.challenge), new Set<string>())
+        .values(),
+    ]
+    const isChallengeValid = challenges.every((challenge) =>
+      challengeStore.verify(challenge)
+    )
 
     if (!isChallengeValid) return res.send({ valid: false })
 
-    const result = await rola(req.body)
+    const result = await ResultAsync.combine(
+      req.body.map((signedChallenge) => rola(signedChallenge))
+    )
 
     if (result.isErr()) return res.send({ valid: false })
 
