@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@radixdlt/radix-dapp-toolkit": "^0.3.0-rcnet-v2.8",
+    "@radixdlt/radix-dapp-toolkit": "0.5.0-dev-elm.4",
     "@radixdlt/radix-engine-toolkit": "0.2.1",
     "@types/cors": "^2.8.13",
     "@types/elliptic": "^6.4.14",

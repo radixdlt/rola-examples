@@ -48,15 +48,15 @@ radixDappToolkit.walletApi.provideChallengeGenerator(getChallenge);
 
 const rolaResultElement = document.getElementById("rola-result")!;
 
-radixDappToolkit.walletApi.walletData$.subscribe(async (walletData) => {
+radixDappToolkit.walletApi.dataRequestControl(async ({ proofs }) => {
   const { valid } = await fetch("http://localhost:3000/verify", {
     method: "POST",
-    body: JSON.stringify(walletData.proofs),
+    body: JSON.stringify(proofs),
     headers: { "content-type": "application/json" },
   }).then((res): Promise<{ valid: boolean }> => res.json());
 
   rolaResultElement.innerHTML = JSON.stringify(
-    walletData.proofs.map((item) => ({ ...item, rolaVerified: valid })),
+    proofs.map((item) => ({ ...item, rolaVerified: valid })),
     null,
     2
   );
