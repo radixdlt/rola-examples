@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@radixdlt/radix-dapp-toolkit": "0.5.0-dev-elm.4",
-    "@radixdlt/radix-engine-toolkit": "0.2.1",
+    "@radixdlt/radix-engine-toolkit": "0.2.7",
     "@types/cors": "^2.8.13",
     "@types/elliptic": "^6.4.14",
     "@types/express": "^4.17.17",
