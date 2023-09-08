@@ -1,6 +1,6 @@
 # [ROLA EXAMPLES HAS MOVED](https://github.com/radixdlt/rola/tree/main/examples/typescript-full-stack)
 
-# [Depricated] Radix Off-Ledger Authentication (ROLA) example
+# [Deprecated] Radix Off-Ledger Authentication (ROLA) example
 
 This is a simple end-to-end implementation of ROLA using a express server as backend and TypeScript dApp as client.
 
