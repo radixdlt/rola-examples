@@ -1,4 +1,4 @@
-# [ROLA EXAMPLES HAS MOVED](https://github.com/radixdlt/rola/tree/main/typescript)
+# [ROLA EXAMPLES HAS MOVED](https://github.com/radixdlt/rola/tree/main/examples/typescript-full-stack)
 
 # [Deprecated] Radix Off-Ledger Authentication (ROLA) example
 
